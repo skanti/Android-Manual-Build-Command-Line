@@ -87,7 +87,7 @@ add_custom_command(OUTPUT ${HOME_DIR}/jni/libnative_app_glue.a
         COMMENT "Creating native_app_glue static library.")
 
 add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libnative-activity.so
-        COMMAND ${CXX} -I ${CXX_INCLUDES} -march=armv8-a -std=c++11 -c jni/main.cpp -o jni/main.o
+        COMMAND ${CXX} -I ${CXX_INCLUDES} -march=armv8-a -std=c++11 -fPIC -c jni/main.cpp -o jni/main.o
         COMMAND ${CXX} -I ${CXX_INCLUDES} -L jni -shared -llog -landroid -lEGL -lGLESv1_CM -lnative_app_glue jni/main.o -o $@
         DEPENDS jni/main.cpp jni/libnative_app_glue.a
         WORKING_DIRECTORY ${HOME_DIR}
