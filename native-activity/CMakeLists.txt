@@ -28,6 +28,7 @@ set(SOURCE_FILES_H
 set(CMAKE_VERBOSE_MAKEFILE 0)
 
 add_custom_target(NativeActivity
+        #COMMAND rm -rf bin/*
         COMMAND adb install -r bin/NativeActivity.apk
         DEPENDS bin/NativeActivity.apk
         WORKING_DIRECTORY ${HOME_DIR}
@@ -80,16 +81,8 @@ add_custom_command(OUTPUT ${HOME_DIR}/ToyKey.keystore
         COMMENT "Creating ToyKey.keystore.")
 
 
-add_custom_command(OUTPUT ${HOME_DIR}/jni/libnative_app_glue.a
-        COMMAND ${CXX} -c ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c -o jni/native_app_glue.o
-        COMMAND ${AR} rcs $@ jni/native_app_glue.o
-        DEPENDS ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
-        WORKING_DIRECTORY ${HOME_DIR}
-        COMMENT "Creating native_app_glue static library.")
-
 add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libnative-activity.so
-        COMMAND ${CXX} -I ${CXX_INCLUDES} -march=armv8-a -std=gnu++11 -fPIC -c jni/main.cpp -o jni/main.o
-        COMMAND ${CXX} -I ${CXX_INCLUDES} -L jni -shared -llog -landroid -lEGL -lGLESv1_CM -lnative_app_glue jni/main.o -o $@
-        DEPENDS jni/main.cpp jni/libnative_app_glue.a
+        COMMAND ${ANDROID_NDK}/bin/ndk-build NDK_APPLICATION_MK=Application.mk NDK_LIBS_OUT=lib
+        DEPENDS jni/main.cpp jni/Android.mk Application.mk
         WORKING_DIRECTORY ${HOME_DIR}
-        COMMENT "Creating c++ shared libraries.")
+        COMMENT "Creating lib/arm64-v8a/libnative-activity.so")
