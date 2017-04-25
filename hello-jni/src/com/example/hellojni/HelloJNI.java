@@ -5,7 +5,7 @@ import android.widget.TextView;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class HelloJni extends Activity
+public class HelloJNI extends Activity
 {
     /** Called when the activity is first created. */
     @Override
@@ -13,14 +13,15 @@ public class HelloJni extends Activity
     {
         super.onCreate(savedInstanceState);
         TextView  tv = new TextView(this);
-        tv.setText( stringFromJNI() );
+        // tv.setText( stringFromJNI() );
+        tv.setText("sup");
         setContentView(tv);
     }
 	
-    public native String  stringFromJNI();
+  //   public native String  stringFromJNI();
 	
-    static {
-		Log.i("amo", "Trying to load shared library!");
-        System.loadLibrary("hello");
-    }
+  //   static {
+		// Log.i("amo", "Trying to load shared library!");
+  //       System.loadLibrary("hellojni");
+  //   }
 }
