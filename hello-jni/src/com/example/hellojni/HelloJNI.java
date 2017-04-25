@@ -13,15 +13,15 @@ public class HelloJNI extends Activity
     {
         super.onCreate(savedInstanceState);
         TextView  tv = new TextView(this);
-        // tv.setText( stringFromJNI() );
-        tv.setText("sup");
+        tv.setText( stringFromJNI() );
+        // tv.setText("sup");
         setContentView(tv);
     }
 	
-  //   public native String  stringFromJNI();
+    public native String  stringFromJNI();
 	
-  //   static {
-		// Log.i("amo", "Trying to load shared library!");
-  //       System.loadLibrary("hellojni");
-  //   }
+    static {
+		Log.i("amo", "Trying to load shared library!");
+        System.loadLibrary("hellojni");
+    }
 }

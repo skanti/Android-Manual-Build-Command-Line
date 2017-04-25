@@ -77,8 +77,14 @@ add_custom_command(OUTPUT ${HOME_DIR}/ToyKey.keystore
 
 
 add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
-        COMMAND ${CXX} -march=armv8-a --sysroot=${TOOLCHAIN}/sysroot -fPIC -c jni/HelloJNI.cpp -o jni/HelloJNI.o
-        COMMAND ${CXX} -shared jni/HelloJNI.o -o ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
-        DEPENDS jni/HelloJNI.cpp
+        COMMAND ${ANDROID_NDK}/build/ndk-build NDK_APPLICATION_MK=Application.mk NDK_LIBS_OUT=lib
+        DEPENDS jni/HelloJNI.c jni/Android.mk Application.mk
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating lib/arm64-v8a/libhellojni.so")
+
+# add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
+#         COMMAND ${CXX} -march=armv8-a --sysroot=${TOOLCHAIN}/sysroot -fPIC -c jni/HelloJNI.cpp -o jni/HelloJNI.o
+#         COMMAND ${CXX} -shared jni/HelloJNI.o -o ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
+#         DEPENDS jni/HelloJNI.cpp
+#         WORKING_DIRECTORY ${HOME_DIR}
+#         COMMENT "Creating lib/arm64-v8a/libhellojni.so")
