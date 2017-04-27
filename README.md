@@ -45,6 +45,10 @@ adb logcat *:W
 
 The curly braces `{A,B}` mean, you have to choose for one. E.g. `cd {A, B}` means decide for `cd A` or `cd B`.
 
+If everything goes right, your build will look like this:
+
+![good-build](http://i.imgur.com/dqXF0lE.png)
+
 # To-Do
 
 - [x] have `CMake` as build-system
