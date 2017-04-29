@@ -39,15 +39,13 @@ cd {hello-jni, native-activity}
 mkdir ./build 
 cd ./build
 cmake ../
-make {HelloJNI, NativeActivity}
-adb logcat *:W
+make build
+make deploy (phone needs to be connected to computer)
 ```
-
-The curly braces `{A,B}` mean, you have to choose for one. E.g. `cd {A, B}` means decide for `cd A` or `cd B`.
 
 If everything goes right, your build will look like this:
 
-![good-build](http://i.imgur.com/dqXF0lE.png)
+![good-build](http://i.imgur.com/FQoA75W.png)
 
 # To-Do
 
