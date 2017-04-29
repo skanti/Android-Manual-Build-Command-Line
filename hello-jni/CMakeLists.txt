@@ -22,9 +22,9 @@ set(HOME_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_VERBOSE_MAKEFILE 0)
 
 add_custom_target(deploy
-        COMMAND ${ANDROID_HOME}/platform-tools/adb install -r ${HOME_DIR}/bin/HelloJNI.apk
+        COMMAND ${ANDROID_HOME}/platform-tools/adb install -r bin/HelloJNI.apk
         COMMAND ${ANDROID_HOME}/platform-tools/adb logcat -c
-        COMMAND ${ANDROID_HOME}/platform-tools/adb logcat HelloJNI:D *:S
+        COMMAND ${ANDROID_HOME}/platform-tools/adb logcat *:W
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Deploying apk.")
 
@@ -56,7 +56,7 @@ add_custom_command(OUTPUT ${HOME_DIR}/bin/HelloJNI.unsigned.apk
         COMMENT "Creating bin/HelloJNI.unsigned.apk.")
 
 add_custom_command(OUTPUT ${HOME_DIR}/bin/classes.dex
-        COMMAND ${BUILD_TOOLS}/dx --dex --output=${HOME_DIR}/bin/classes.dex ${HOME_DIR}/obj
+        COMMAND ${BUILD_TOOLS}/dx --dex --output=${HOME_DIR}/bin/classes.dex obj
         DEPENDS obj/com/example/hellojni/HelloJNI.class
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating bin/classes/dex.")
@@ -75,7 +75,7 @@ add_custom_command(OUTPUT ${HOME_DIR}/src/com/example/hellojni/R.java
         COMMENT "Creating src/com/example/hellojni/R.java.")
 
 add_custom_command(OUTPUT ${HOME_DIR}/ToyKey.keystore
-        COMMAND $(JAVA_HOME)/bin/keytool -genkeypair -validity 1000 -dname "CN=some company,O=Android,C=JPN" -keystore ${HOME_DIR}/ToyKey.keystore
+        COMMAND $(JAVA_HOME)/bin/keytool -genkeypair -validity 1000 -dname "CN=some company,O=Android,C=JPN" -keystore ToyKey.keystore
         -storepass armena -keypass armena -alias HelloJNIKey -keyalg RSA
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating ToyKey.keystore.")
@@ -83,7 +83,7 @@ add_custom_command(OUTPUT ${HOME_DIR}/ToyKey.keystore
 
 add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
         COMMAND ${CXX} -march=armv8-a --sysroot=${TOOLCHAIN}/sysroot -fPIC -c jni/HelloJNI.cpp -o jni/HelloJNI.o
-        COMMAND ${CXX} -shared jni/HelloJNI.o -o ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
+        COMMAND ${CXX} -shared jni/HelloJNI.o -o lib/arm64-v8a/libhellojni.so
         DEPENDS jni/HelloJNI.cpp
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating lib/arm64-v8a/libhellojni.so")

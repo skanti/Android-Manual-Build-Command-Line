@@ -29,9 +29,9 @@ set(SOURCE_FILES_H
 set(CMAKE_VERBOSE_MAKEFILE 0)
 
 add_custom_target(deploy
-        COMMAND ${ANDROID_HOME}/platform-tools/adb install -r ${HOME_DIR}/bin/NativeActivity.apk
+        COMMAND ${ANDROID_HOME}/platform-tools/adb install -r bin/NativeActivity.apk
         COMMAND ${ANDROID_HOME}/platform-tools/adb logcat -c
-        COMMAND ${ANDROID_HOME}/platform-tools/adb logcat *:E
+        COMMAND ${ANDROID_HOME}/platform-tools/adb logcat *:W
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Deploying apk.")
 
@@ -47,7 +47,7 @@ add_custom_target(dummy
 
 
 add_custom_command(OUTPUT ${HOME_DIR}/bin/NativeActivity.apk
-        COMMAND ${BUILD_TOOLS}/zipalign -f 4 bin/NativeActivity.signed.apk ${HOME_DIR}/bin/NativeActivity.apk
+        COMMAND ${BUILD_TOOLS}/zipalign -f 4 bin/NativeActivity.signed.apk bin/NativeActivity.apk
         DEPENDS bin/NativeActivity.signed.apk
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating bin/NativeActivity.apk.")
@@ -61,14 +61,14 @@ add_custom_command(OUTPUT ${HOME_DIR}/bin/NativeActivity.signed.apk
 
 add_custom_command(OUTPUT ${HOME_DIR}/bin/NativeActivity.unsigned.apk
         COMMAND ${BUILD_TOOLS}/aapt package -f -M AndroidManifest.xml -S res
-        -I ${ANDROID_HOME}/platforms/android-25/android.jar -F ${HOME_DIR}/bin/NativeActivity.unsigned.apk bin
+        -I ${ANDROID_HOME}/platforms/android-25/android.jar -F bin/NativeActivity.unsigned.apk bin
         COMMAND ${BUILD_TOOLS}/aapt add ${HOME_DIR}/bin/NativeActivity.unsigned.apk lib/arm64-v8a/libnative-activity.so
         DEPENDS bin/classes.dex lib/arm64-v8a/libnative-activity.so
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating bin/NativeActivity.unsigned.apk.")
 
 add_custom_command(OUTPUT ${HOME_DIR}/bin/classes.dex
-        COMMAND ${BUILD_TOOLS}/dx --dex --output=${HOME_DIR}/bin/classes.dex ${HOME_DIR}/obj
+        COMMAND ${BUILD_TOOLS}/dx --dex --output=bin/classes.dex obj
         DEPENDS obj/com/example/native_activity/R.class
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating bin/classes/dex.")
@@ -86,7 +86,7 @@ add_custom_command(OUTPUT ${HOME_DIR}/src/com/example/native_activity/R.java
         COMMENT "Creating src/com/example/native_activity/R.java.")
 
 add_custom_command(OUTPUT ${HOME_DIR}/ToyKey.keystore
-        COMMAND $(JAVA_HOME)/bin/keytool -genkeypair -validity 1000 -dname "CN=some company,O=Android,C=JPN" -keystore ${HOME_DIR}/ToyKey.keystore
+        COMMAND $(JAVA_HOME)/bin/keytool -genkeypair -validity 1000 -dname "CN=some company,O=Android,C=JPN" -keystore ToyKey.keystore
         -storepass armena -keypass armena -alias NativeActivityKey -keyalg RSA
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating ToyKey.keystore.")
