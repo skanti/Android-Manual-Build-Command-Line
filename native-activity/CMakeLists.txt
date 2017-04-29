@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.3)
 project(NativeActivity)
 
 # -> dirs
@@ -25,14 +25,25 @@ set(SOURCE_FILES_CPP
 set(SOURCE_FILES_H
         )
 
+
 set(CMAKE_VERBOSE_MAKEFILE 0)
 
-add_custom_target(NativeActivity
-        #COMMAND rm -rf bin/*
+add_custom_target(deploy
         COMMAND ${ANDROID_HOME}/platform-tools/adb install -r ${HOME_DIR}/bin/NativeActivity.apk
+        COMMAND ${ANDROID_HOME}/platform-tools/adb logcat -c
+        COMMAND ${ANDROID_HOME}/platform-tools/adb logcat *:E
+        WORKING_DIRECTORY ${HOME_DIR}
+        COMMENT "Deploying apk.")
+
+add_custom_target(build
         DEPENDS bin/NativeActivity.apk
         WORKING_DIRECTORY ${HOME_DIR}
-        COMMENT "Installing apk.")
+        COMMENT "Building apk.")
+
+add_custom_target(dummy
+        DEPENDS ${HOME_DIR}/lib/arm64-v8a/libnative-activity.so
+        WORKING_DIRECTORY ${HOME_DIR}
+        COMMENT "Doing dummy stuff.")
 
 
 add_custom_command(OUTPUT ${HOME_DIR}/bin/NativeActivity.apk
@@ -81,8 +92,19 @@ add_custom_command(OUTPUT ${HOME_DIR}/ToyKey.keystore
         COMMENT "Creating ToyKey.keystore.")
 
 
-add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libnative-activity.so
-        COMMAND ${ANDROID_NDK}/build/ndk-build NDK_APPLICATION_MK=Application.mk NDK_LIBS_OUT=lib
-        DEPENDS jni/main.cpp jni/Android.mk Application.mk
+
+add_custom_command(OUTPUT ${HOME_DIR}/jni/libnative_app_glue.a
+        COMMAND ${CC} -Wall -march=armv8-a -c ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c -o jni/native_app_glue.o
+        COMMAND ${AR} rcs ${HOME_DIR}/jni/libnative_app_glue.a jni/native_app_glue.o
+        BYPRODUCTS jni/native_app_glue.o
+        DEPENDS ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
         WORKING_DIRECTORY ${HOME_DIR}
-        COMMENT "Creating lib/arm64-v8a/libnative-activity.so")
+        COMMENT "Creating native_app_glue static library.")
+
+add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libnative-activity.so 
+        COMMAND ${CXX} -Wall -I ${CXX_INCLUDES} -march=armv8-a --sysroot=${TOOLCHAIN}/sysroot -std=gnu++11 -fPIC -c jni/main.cpp -o jni/main.o
+        COMMAND ${CXX} -I ${CXX_INCLUDES} -L jni -shared jni/main.o -o lib/arm64-v8a/libnative-activity.so -llog -landroid -lEGL -lGLESv1_CM -lnative_app_glue
+        BYPRODUCTS jni/main.o
+        DEPENDS jni/main.cpp jni/libnative_app_glue.a
+        WORKING_DIRECTORY ${HOME_DIR}
+        COMMENT "Creating c++ shared libraries.")

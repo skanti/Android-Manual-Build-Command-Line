@@ -19,14 +19,19 @@ set(CXX_INCLUDES "${ANDROID_NDK}/sources/android/native_app_glue")
 
 set(HOME_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_VERBOSE_MAKEFILE 1)
+set(CMAKE_VERBOSE_MAKEFILE 0)
 
-add_custom_target(HelloJNI
-        #COMMAND rm -rf bin/*
+add_custom_target(deploy
         COMMAND ${ANDROID_HOME}/platform-tools/adb install -r ${HOME_DIR}/bin/HelloJNI.apk
+        COMMAND ${ANDROID_HOME}/platform-tools/adb logcat -c
+        COMMAND ${ANDROID_HOME}/platform-tools/adb logcat HelloJNI:D *:S
+        WORKING_DIRECTORY ${HOME_DIR}
+        COMMENT "Deploying apk.")
+
+add_custom_target(build
         DEPENDS bin/HelloJNI.apk
         WORKING_DIRECTORY ${HOME_DIR}
-        COMMENT "Installing apk.")
+        COMMENT "Building apk.")
 
 
 add_custom_command(OUTPUT ${HOME_DIR}/bin/HelloJNI.apk
@@ -77,14 +82,8 @@ add_custom_command(OUTPUT ${HOME_DIR}/ToyKey.keystore
 
 
 add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
-        COMMAND ${ANDROID_NDK}/build/ndk-build NDK_APPLICATION_MK=Application.mk NDK_LIBS_OUT=lib
-        DEPENDS jni/HelloJNI.cpp jni/Android.mk Application.mk
+        COMMAND ${CXX} -march=armv8-a --sysroot=${TOOLCHAIN}/sysroot -fPIC -c jni/HelloJNI.cpp -o jni/HelloJNI.o
+        COMMAND ${CXX} -shared jni/HelloJNI.o -o ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
+        DEPENDS jni/HelloJNI.cpp
         WORKING_DIRECTORY ${HOME_DIR}
         COMMENT "Creating lib/arm64-v8a/libhellojni.so")
-
-# add_custom_command(OUTPUT ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
-#         COMMAND ${CXX} -march=armv8-a --sysroot=${TOOLCHAIN}/sysroot -fPIC -c jni/HelloJNI.cpp -o jni/HelloJNI.o
-#         COMMAND ${CXX} -shared jni/HelloJNI.o -o ${HOME_DIR}/lib/arm64-v8a/libhellojni.so
-#         DEPENDS jni/HelloJNI.cpp
-#         WORKING_DIRECTORY ${HOME_DIR}
-#         COMMENT "Creating lib/arm64-v8a/libhellojni.so")
