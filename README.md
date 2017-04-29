@@ -2,7 +2,7 @@
 Sample Code on the creation of Android APKs using command line &amp; makefile only.
 
 This is a sample/example code on how to create an android project with the command line only. 
-- No use of ```gradle, ant, maven``` and all that other stuff.
+- No use of ```gradle, ant, maven, android.mk``` and all that other stuff.
 
 # Description
 I prepared 2 samples:
@@ -52,7 +52,7 @@ If everything goes right, your build will look like this:
 # To-Do
 
 - [x] have `CMake` as build-system
-- [ ] remove `Android.mk` makefiles. Instead, compile everything by hand. This will give so much more control (no more hidden compilation flags, etc.)
+- [x] remove `Android.mk` makefiles. Instead, compile everything by hand. This will give so much more control (no more hidden compilation flags, etc.)
 
 # Contact
 
